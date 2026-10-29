@@ -1,0 +1,99 @@
+@import 'tailwindcss';
+
+/*
+ * Język wizualny: księga rachunkowa.
+ * Papier w chłodnym odcieniu, atrament, linie zamiast kart, ołówek audytora
+ * (zielony ptaszek = rozliczone, czerwony = wymaga uwagi), niebieskie pióro
+ * jako jedyny kolor akcji.
+ */
+@theme {
+  --font-sans: 'IBM Plex Sans Variable', system-ui, sans-serif;
+  --font-serif: 'Newsreader Variable', Georgia, serif;
+
+  --color-ink: #18202b;
+  --color-ink-soft: #4a5565;
+  --color-ink-faint: #6b7686;
+  --color-paper: #f2f4f1;
+  --color-sheet: #fbfcfa;
+  --color-rule: #cbd3cd;
+  --color-rule-soft: #e1e6e2;
+  --color-pen: #2740b8;
+  --color-pen-dark: #1c3194;
+  --color-pen-soft: #e4e8f8;
+  --color-tick: #1e7b54;
+  --color-tick-soft: #dff0e7;
+  --color-flag: #b4372b;
+  --color-flag-soft: #f6e2df;
+  --color-amber: #8f5a0c;
+  --color-amber-soft: #f6ebd5;
+
+  --radius-control: 3px;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pen);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Kwoty zawsze w tabularnych cyfrach, żeby kolumny się równały. */
+  .num {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Podwójna kreska pod sumą: tradycyjny zapis księgowy. */
+  .double-rule {
+    border-bottom: 3px double var(--color-ink);
+  }
+}
+
+/* Ptaszek audytora rysowany po zatwierdzeniu rozliczenia (reakcja na akcję użytkownika). */
+@keyframes draw-tick {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.tick-draw path {
+  stroke-dasharray: 24;
+  animation: draw-tick 320ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tick-draw path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
