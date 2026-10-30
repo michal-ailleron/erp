@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_USE_MOCKS: "true"
+    volumes:
+      # Bind-mount the source for hot reload (keep the repo on the WSL filesystem).
+      - ./frontend:/app
+      # Keep the container's node_modules, never the host's.
+      - /app/node_modules
+    restart: unless-stopped
