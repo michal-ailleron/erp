@@ -1,7 +1,7 @@
 # Frontend: Uzgodnienia
 
 Interfejs do uzgadniania płatności bankowych z fakturami (mini-ERP, kontrahenci, usługi, faktury, transakcje, ekran rozliczeń).
-Na razie dane pochodzą z mocków (MSW). Backend Spring Boot dojdzie później. Projekt edukacyjny, dane wyłącznie syntetyczne.
+Dane pochodzą z backendu Spring Boot (`../backend/netting`) tam, gdzie kontrakt już istnieje (na razie kontrahenci), a z mocków (MSW) tam, gdzie go jeszcze nie ma. Projekt edukacyjny, dane wyłącznie syntetyczne.
 
 ## Stack
 
@@ -11,7 +11,8 @@ wzorców ze starszych wersji (dotyczy zwłaszcza React Router, MSW i Vitest).
 
 ## Komendy
 
-- `npm run dev`: serwer deweloperski (mocki włączone)
+- `npm run dev`: serwer deweloperski (mocki włączone, `/api` przez proxy do backendu)
+- `npm run api:gen`: generuje `src/types/api.gen.ts` z `../contract/openapi.yaml` (po każdej zmianie kontraktu)
 - `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`
 
 ## Struktura
@@ -21,7 +22,7 @@ wzorców ze starszych wersji (dotyczy zwłaszcza React Router, MSW i Vitest).
 - `src/features/<nazwa>`: `api.ts` (fetchery), `hooks.ts` (React Query), `*-page.tsx`, testy obok kodu
 - `src/lib`: klient API, formatowanie, `useListParams`
 - `src/mocks`: mock backendu (`handlers.ts`, dane w `data/seed.ts`, pamięć w `db.ts`)
-- `src/types/api.ts`: kontrakt API
+- `src/types/api.gen.ts`: typy wygenerowane z kontraktu (nie edytuj ręcznie, commitowany), `src/types/api.ts`: re-eksporty pod stałymi nazwami i typy jeszcze bez kontraktu
 
 ## Zasady
 
@@ -29,7 +30,7 @@ wzorców ze starszych wersji (dotyczy zwłaszcza React Router, MSW i Vitest).
   Sumy, różnice, salda i flagi typu `overdue` liczy backend. Arytmetyka na groszach jest dozwolona tylko w `src/mocks`.
 - Fetch wyłącznie przez `lib/api-client.ts` i funkcje w `features/*/api.ts`. Komponenty używają hooków.
 - Stan list (strona, szukany tekst, filtry) trzymamy w URL (`useListParams`).
-- `types/api.ts` jest źródłem prawdy, dopóki nie ma OpenAPI. Zmiana kontraktu to jednoczesna zmiana typów, mocków i testów.
+- Źródłem prawdy jest `../contract/openapi.yaml` (wspólny z backendem). Zmiana kontraktu: edytuj YAML, `npm run api:gen`, popraw typecheck, mocki i testy. Nowy endpoint dodajemy do kontraktu, nie do `types/api.ts`.
 - Każda nowa funkcja ma test. Przed zakończeniem pracy `typecheck`, `lint` i `test` muszą przechodzić.
 - Nie dodawaj zależności bez pytania. Bez `any`, `as` tylko na granicy API.
 - Tekst interfejsu po polsku, kod i nazwy po angielsku.
@@ -49,5 +50,7 @@ Zmiany wizualne sprawdzaj w uruchomionej aplikacji (np. Playwright), nie tylko k
 
 ## Przejście na prawdziwy backend
 
-Ustaw `VITE_USE_MOCKS=false` i odkomentuj proxy `/api` w `vite.config.ts`. Handlery w `src/mocks/handlers.ts`
-są wykonywalną specyfikacją endpointów, które musi zaimplementować ERP.
+Proxy `/api` w `vite.config.ts` kieruje do backendu (`API_PROXY_TARGET`, domyślnie `http://localhost:8080`, w docker-compose `http://backend:8080`).
+Przeglądarkowy MSW (`src/mocks/browser.ts`) pomija endpointy z prawdziwą implementacją (`counterpartyHandlers` w `handlers.ts` używają tylko testy).
+Kolejny endpoint: dodaj go do kontraktu, zaimplementuj w backendzie, przenieś jego handler do osobnej listy (jak `counterpartyHandlers`) i wyłącz w `browser.ts`.
+`VITE_USE_MOCKS=false` wyłącza MSW całkowicie (dopiero gdy wszystkie endpointy są w backendzie).

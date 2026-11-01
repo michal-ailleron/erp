@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: Uzgodnienia API
+  description: >-
+    Kontrakt REST między frontendem (frontend/) a backendem Spring Boot (backend/netting).
+    To jest jedyne źródło prawdy: backend generuje z niego interfejsy, frontend typy (npm run api:gen).
+    Dane wyłącznie syntetyczne.
+  version: 0.1.0
+servers:
+  - url: /api
+tags:
+  - name: Counterparties
+    description: Kontrahenci (odbiorcy i dostawcy)
+paths:
+  /counterparties:
+    get:
+      tags: [Counterparties]
+      operationId: listCounterparties
+      summary: Lista kontrahentów
+      description: Stronicowana lista z opcjonalnym filtrem po typie i wyszukiwaniem tekstowym (nazwa, NIP, miasto).
+      parameters:
+        - name: page
+          in: query
+          description: Numer strony, od 1.
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: Liczba pozycji na stronie.
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: q
+          in: query
+          description: Szukany tekst, bez rozróżniania wielkości liter.
+          schema:
+            type: string
+        - name: kind
+          in: query
+          description: Filtr po typie kontrahenta.
+          schema:
+            $ref: '#/components/schemas/CounterpartyKind'
+      responses:
+        '200':
+          description: Strona kontrahentów
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterpartyPage'
+        '400':
+          description: Nieprawidłowe parametry zapytania
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CounterpartyKind:
+      type: string
+      enum: [CUSTOMER, SUPPLIER, BOTH]
+    Counterparty:
+      type: object
+      required: [id, name, taxId, city, kind, ibans]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        taxId:
+          type: string
+        city:
+          type: string
+        kind:
+          $ref: '#/components/schemas/CounterpartyKind'
+        ibans:
+          type: array
+          items:
+            type: string
+    CounterpartyPage:
+      type: object
+      required: [items, page, pageSize, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Counterparty'
+        page:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int64
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
