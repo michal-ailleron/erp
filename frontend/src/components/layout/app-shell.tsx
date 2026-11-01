@@ -14,21 +14,23 @@ const NAV_ITEMS: readonly { to: string; label: string; icon: LucideIcon; end?: b
 
 export function AppShell() {
   return (
-    <div className="min-h-dvh md:grid md:grid-cols-[14.5rem_minmax(0,1fr)]">
+    <div className="min-h-dvh md:grid md:grid-cols-[16rem_minmax(0,1fr)] md:gap-2 md:p-3">
       <a
         href="#main"
-        className="sr-only z-10 bg-sheet px-3 py-2 text-pen focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+        className="sr-only z-10 rounded-control bg-sheet px-3 py-2 text-pen focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
       >
         Przejdź do treści
       </a>
 
-      <aside className="flex flex-col border-b border-rule bg-sheet md:sticky md:top-0 md:h-dvh md:border-r md:border-b-0">
-        <div className="flex items-center gap-2 px-4 py-4 md:py-6">
-          <TickIcon className="size-6 text-tick" />
-          <span className="font-serif text-2xl tracking-tight text-ink">Uzgodnienia</span>
+      <aside className="glass sticky top-0 z-20 flex flex-col border-b border-rule-soft md:top-3 md:h-[calc(100dvh-1.5rem)] md:rounded-card md:border md:shadow-card">
+        <div className="flex items-center gap-2.5 px-4 py-4 md:px-5 md:py-6">
+          <span className="grid size-9 place-items-center rounded-xl bg-linear-to-br from-pen to-tick text-white shadow-pop">
+            <TickIcon className="size-5" />
+          </span>
+          <span className="text-gradient font-display text-xl font-semibold tracking-tight">Uzgodnienia</span>
         </div>
 
-        <nav aria-label="Główne" className="px-2 pb-2 md:flex-1 md:pb-0">
+        <nav aria-label="Główne" className="px-3 pb-3 md:flex-1 md:pb-0">
           <ul className="flex gap-1 overflow-x-auto md:flex-col">
             {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
               <li key={to}>
@@ -37,12 +39,14 @@ export function AppShell() {
                   end={end}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-2.5 rounded-control px-3 py-2 whitespace-nowrap',
-                      isActive ? 'bg-pen-soft font-medium text-pen' : 'text-ink-soft hover:bg-rule-soft hover:text-ink',
+                      'flex items-center gap-3 rounded-control px-3 py-2 whitespace-nowrap transition-all duration-150',
+                      isActive
+                        ? 'bg-pen-soft font-medium text-pen shadow-sm'
+                        : 'text-ink-soft hover:bg-rule-soft hover:text-ink',
                     )
                   }
                 >
-                  <Icon aria-hidden className="size-4" />
+                  <Icon aria-hidden className="size-[1.125rem]" />
                   {label}
                 </NavLink>
               </li>
@@ -50,7 +54,7 @@ export function AppShell() {
           </ul>
         </nav>
 
-        <p className="hidden px-4 py-4 text-xs text-ink-faint md:block">
+        <p className="mx-3 mb-3 hidden rounded-control bg-pen-soft px-3 py-2.5 text-xs text-ink-soft md:block">
           Dane demonstracyjne. Backend jest zastąpiony mockami.
         </p>
       </aside>

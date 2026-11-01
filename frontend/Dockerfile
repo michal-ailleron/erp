@@ -18,9 +18,8 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
 FROM dev AS build
 RUN npm run build
 
-# Production-style preview of the built bundle.
-FROM base AS prod
-ENV NODE_ENV=production
-COPY --from=build /app /app
+# Production: static bundle served by Caddy (no Node, no node_modules).
+FROM caddy:2.8.4-alpine AS prod
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /app/dist /srv
 EXPOSE 4173
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]

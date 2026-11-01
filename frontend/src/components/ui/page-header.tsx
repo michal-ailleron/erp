@@ -8,9 +8,9 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
-    <header className="flex flex-wrap items-end justify-between gap-4 pb-6">
+    <header className="flex flex-wrap items-end justify-between gap-4 pb-7">
       <div>
-        <h1 className="text-3xl text-ink">{title}</h1>
+        <h1 className="text-3xl text-ink sm:text-4xl">{title}</h1>
         {description && <p className="mt-1 max-w-prose text-ink-soft">{description}</p>}
       </div>
       {actions}

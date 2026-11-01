@@ -37,10 +37,11 @@ wzorców ze starszych wersji (dotyczy zwłaszcza React Router, MSW i Vitest).
 
 ## Design
 
-Język "księga rachunkowa": chłodny papier, atrament, linie zamiast kart, kwoty w cyfrach tabularnych (`.num`).
-Tokeny kolorów i fontów są w `src/index.css` (`@theme`). Jeden kolor akcji (`pen`), kolory statusu: zielony to rozliczone,
-czerwony to wymaga uwagi, bursztyn to częściowo. Nie dodawaj gradientów, cieni ani zaokrąglonych kart.
-Widoczny fokus i `prefers-reduced-motion` muszą działać.
+Język "nowoczesny SaaS": miękkie karty (`.card`, promień `--radius-card`, delikatny cień), gradientowy akcent (logo, saldo, przycisk główny),
+szkło (`.glass`) w nawigacji, tło z subtelną poświatą, kwoty w cyfrach tabularnych (`.num`). Jasny i ciemny motyw wg ustawień systemu:
+tokeny kolorów, cieni i fontów są w `src/index.css` (`@theme` i nadpisanie w `prefers-color-scheme: dark`), nie wpisuj kolorów na sztywno.
+Jeden kolor akcji (`pen`), kolory statusu: zielony to rozliczone, czerwony to wymaga uwagi, bursztyn to częściowo.
+Gradienty i cienie tylko przez tokeny i klasy pomocnicze. Widoczny fokus i `prefers-reduced-motion` muszą działać.
 
 ## Weryfikacja UI
 

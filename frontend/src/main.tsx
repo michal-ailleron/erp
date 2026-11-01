@@ -1,5 +1,4 @@
 import '@fontsource-variable/ibm-plex-sans'
-import '@fontsource-variable/newsreader'
 import './index.css'
 
 import { StrictMode } from 'react'

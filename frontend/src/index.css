@@ -1,33 +1,63 @@
 @import 'tailwindcss';
 
 /*
- * Język wizualny: księga rachunkowa.
- * Papier w chłodnym odcieniu, atrament, linie zamiast kart, ołówek audytora
- * (zielony ptaszek = rozliczone, czerwony = wymaga uwagi), niebieskie pióro
- * jako jedyny kolor akcji.
+ * Język wizualny: nowoczesny SaaS.
+ * Miękkie karty z delikatnym cieniem, gradientowy akcent, szkło w nawigacji,
+ * jasny i ciemny motyw (wg ustawień systemu). Kolory statusu: zielony to rozliczone,
+ * czerwony wymaga uwagi, bursztyn to częściowo. Jeden kolor akcji (`pen`).
  */
 @theme {
   --font-sans: 'IBM Plex Sans Variable', system-ui, sans-serif;
-  --font-serif: 'Newsreader Variable', Georgia, serif;
+  --font-display: 'IBM Plex Sans Variable', system-ui, sans-serif;
 
-  --color-ink: #18202b;
-  --color-ink-soft: #4a5565;
-  --color-ink-faint: #6b7686;
-  --color-paper: #f2f4f1;
-  --color-sheet: #fbfcfa;
-  --color-rule: #cbd3cd;
-  --color-rule-soft: #e1e6e2;
-  --color-pen: #2740b8;
-  --color-pen-dark: #1c3194;
-  --color-pen-soft: #e4e8f8;
-  --color-tick: #1e7b54;
-  --color-tick-soft: #dff0e7;
-  --color-flag: #b4372b;
-  --color-flag-soft: #f6e2df;
-  --color-amber: #8f5a0c;
-  --color-amber-soft: #f6ebd5;
+  --color-ink: #0f172a;
+  --color-ink-soft: #475569;
+  --color-ink-faint: #64748b;
+  --color-paper: #f4f6fb;
+  --color-sheet: #ffffff;
+  --color-rule: #d5dbe8;
+  --color-rule-soft: #e8ecf4;
+  --color-pen: #4f46e5;
+  --color-pen-dark: #4338ca;
+  --color-pen-soft: #eceafd;
+  --color-tick: #0f9d6b;
+  --color-tick-soft: #dcf5ea;
+  --color-flag: #dc3a4b;
+  --color-flag-soft: #fde6e9;
+  --color-amber: #b45f06;
+  --color-amber-soft: #fdf0d5;
 
-  --radius-control: 3px;
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.08);
+  --shadow-pop: 0 2px 4px rgb(15 23 42 / 0.06), 0 12px 32px -8px rgb(79 70 229 / 0.25);
+}
+
+/* Ciemny motyw: nadpisujemy tokeny, utility Tailwinda czytają je ze zmiennych. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-ink: #e8ecf8;
+    --color-ink-soft: #a3adc4;
+    --color-ink-faint: #8591a9;
+    --color-paper: #0b1020;
+    --color-sheet: #141a2e;
+    --color-rule: #2c3552;
+    --color-rule-soft: #1f2842;
+    --color-pen: #8b86ff;
+    --color-pen-dark: #a5a1ff;
+    --color-pen-soft: #23224a;
+    --color-tick: #3ddc9c;
+    --color-tick-soft: #12342a;
+    --color-flag: #ff7a88;
+    --color-flag-soft: #3b1a22;
+    --color-amber: #f5b64c;
+    --color-amber-soft: #392a10;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+    --shadow-pop: 0 2px 4px rgb(0 0 0 / 0.4), 0 12px 32px -8px rgb(139 134 255 / 0.3);
+  }
 }
 
 @layer base {
@@ -42,15 +72,24 @@
 
   body {
     min-height: 100dvh;
+    background:
+      radial-gradient(60rem 28rem at 85% -10%, color-mix(in oklab, var(--color-pen) 14%, transparent), transparent 70%),
+      radial-gradient(40rem 24rem at -5% 105%, color-mix(in oklab, var(--color-tick) 9%, transparent), transparent 70%),
+      var(--color-paper);
+    background-attachment: fixed;
   }
 
   h1,
   h2,
   h3 {
-    font-family: var(--font-serif);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
+    font-family: var(--font-display);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-pen) 30%, transparent);
   }
 
   :focus-visible {
@@ -65,9 +104,26 @@
     font-variant-numeric: tabular-nums lining-nums;
   }
 
-  /* Podwójna kreska pod sumą: tradycyjny zapis księgowy. */
-  .double-rule {
-    border-bottom: 3px double var(--color-ink);
+  /* Karta: miękka powierzchnia z cieniem. */
+  .card {
+    background: var(--color-sheet);
+    border: 1px solid var(--color-rule-soft);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Tekst z gradientem akcentu (kwoty kluczowe, logo). */
+  .text-gradient {
+    background: linear-gradient(120deg, var(--color-pen), var(--color-tick));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Szkło: półprzezroczyste tło z rozmyciem. */
+  .glass {
+    background: color-mix(in oklab, var(--color-sheet) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
   }
 }
 

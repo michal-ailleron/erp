@@ -18,7 +18,7 @@ export function SelectField({ label, options, onValueChange, className, ...props
       <select
         id={id}
         onChange={(event) => onValueChange(event.target.value)}
-        className={cn('h-9 rounded-control border border-rule bg-sheet px-2.5 text-sm text-ink', className)}
+        className={cn('h-9 rounded-control border border-rule-soft bg-sheet px-2.5 text-sm text-ink shadow-sm', className)}
         {...props}
       >
         {options.map((option) => (

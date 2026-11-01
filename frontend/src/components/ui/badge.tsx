@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ReactNode } from 'react'
 
-const badgeVariants = cva('inline-flex items-center rounded-control px-2 py-0.5 text-xs font-medium whitespace-nowrap', {
+const badgeVariants = cva('inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap before:size-1.5 before:rounded-full before:bg-current', {
   variants: {
     tone: {
       neutral: 'bg-rule-soft text-ink-soft',

@@ -39,7 +39,7 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   if (errorMessage) {
     return (
-      <div className="border-y border-rule bg-sheet">
+      <div className="card">
         <ErrorState message={errorMessage} onRetry={onRetry} />
       </div>
     )
@@ -47,23 +47,23 @@ export function DataTable<T>({
 
   if (!isLoading && rows?.length === 0) {
     return (
-      <div className="border-y border-rule bg-sheet">
+      <div className="card">
         <EmptyState title={emptyTitle} hint={emptyHint} />
       </div>
     )
   }
 
   return (
-    <div className="overflow-x-auto border-y border-rule bg-sheet">
+    <div className="card overflow-x-auto">
       <table className="w-full border-collapse text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-ink">
+          <tr className="border-b border-rule-soft bg-paper/60">
             {columns.map((column) => (
               <th
                 key={column.key}
                 scope="col"
-                className={cn('px-4 py-2.5 font-medium text-ink-soft', column.align === 'right' && 'text-right')}
+                className={cn('sticky top-0 px-4 py-3 text-xs font-semibold tracking-wide text-ink-faint uppercase', column.align === 'right' && 'text-right')}
               >
                 {column.header}
               </th>
@@ -82,7 +82,7 @@ export function DataTable<T>({
                 </tr>
               ))
             : rows.map((row) => (
-                <tr key={getRowKey(row)} className="border-b border-rule-soft last:border-b-0 hover:bg-paper">
+                <tr key={getRowKey(row)} className="border-b border-rule-soft last:border-b-0 transition-colors hover:bg-pen-soft/50">
                   {columns.map((column) => (
                     <td
                       key={column.key}
