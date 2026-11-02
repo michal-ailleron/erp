@@ -9,7 +9,7 @@ COPY backend/netting backend/netting
 WORKDIR /repo/backend/netting
 RUN chmod +x mvnw && ./mvnw -B -q package
 
-FROM eclipse-temurin:25-jre AS run
+FROM eclipse-temurin:25-jre-alpine AS run
 WORKDIR /app
 COPY --from=build /repo/backend/netting/target/netting-*.jar app.jar
 EXPOSE 8080
