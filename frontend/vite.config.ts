@@ -10,9 +10,9 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: {
-    // Gdy backend (Spring Boot) będzie gotowy: przełącz VITE_USE_MOCKS=false
-    // i odkomentuj proxy, żeby /api trafiało do aplikacji ERP.
-    // proxy: { '/api': 'http://localhost:8080' },
+    // /api trafia do backendu Spring Boot (w docker-compose: http://backend:8080).
+    // Endpointy, których backend jeszcze nie ma, nadal odpowiada MSW (patrz src/mocks/browser.ts).
+    proxy: { '/api': process.env.API_PROXY_TARGET ?? 'http://localhost:8080' },
   },
   test: {
     environment: 'jsdom',

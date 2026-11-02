@@ -1,7 +1,10 @@
 /**
- * Kontrakt API (po stronie backendu to będzie OpenAPI, a ten plik zastąpi
- * wygenerowany klient). Kwoty są ciągami dziesiętnymi, nigdy number.
+ * Kontrakt API. Źródłem prawdy jest contract/openapi.yaml: typy z kontraktu pochodzą z
+ * `api.gen.ts` (npm run api:gen) i są tu re-eksportowane pod stałymi nazwami. Typy poniżej,
+ * dla których kontraktu jeszcze nie ma, są utrzymywane ręcznie i przejdą do OpenAPI razem z endpointami.
+ * Kwoty są ciągami dziesiętnymi, nigdy number.
  */
+import type { components } from './api.gen'
 
 export type Currency = 'PLN' | 'EUR' | 'USD'
 
@@ -12,16 +15,9 @@ export interface Page<T> {
   total: number
 }
 
-export type CounterpartyKind = 'CUSTOMER' | 'SUPPLIER' | 'BOTH'
-
-export interface Counterparty {
-  id: string
-  name: string
-  taxId: string
-  city: string
-  kind: CounterpartyKind
-  ibans: string[]
-}
+export type CounterpartyKind = components['schemas']['CounterpartyKind']
+export type Counterparty = components['schemas']['Counterparty']
+export type CounterpartyPage = components['schemas']['CounterpartyPage']
 
 export interface Service {
   id: string

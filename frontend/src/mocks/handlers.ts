@@ -35,7 +35,11 @@ function error(status: number, message: string) {
   return HttpResponse.json({ message }, { status })
 }
 
-export const handlers = [
+/**
+ * Kontrahenci mają już prawdziwy endpoint w backendzie (contract/openapi.yaml), więc przeglądarka
+ * go nie mockuje (patrz browser.ts). Testy (server.ts) nadal go używają, żeby działały bez backendu.
+ */
+export const counterpartyHandlers = [
   http.get('/api/counterparties', async ({ request }) => {
     await latency()
     const url = new URL(request.url)
@@ -46,7 +50,10 @@ export const handlers = [
     )
     return HttpResponse.json(paginate(items, url))
   }),
+]
 
+/** Endpointy, których backend jeszcze nie implementuje. */
+export const handlers = [
   http.get('/api/services', async ({ request }) => {
     await latency()
     const url = new URL(request.url)

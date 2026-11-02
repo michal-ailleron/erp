@@ -15,7 +15,7 @@ export function Pagination({ page, pageSize, total, onPageChange }: PaginationPr
   const to = Math.min(page * pageSize, total)
 
   return (
-    <nav aria-label="Stronicowanie" className="flex items-center justify-between gap-4 pt-3 text-sm text-ink-soft">
+    <nav aria-label="Stronicowanie" className="flex items-center justify-between gap-4 pt-4 text-sm text-ink-soft">
       <p aria-live="polite" className="num">
         Pozycje {from} do {to} z {total}
       </p>

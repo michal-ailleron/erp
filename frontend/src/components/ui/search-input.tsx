@@ -32,14 +32,14 @@ export function SearchInput({ value, onDebouncedChange, label, placeholder }: Se
       <label htmlFor={id} className="sr-only">
         {label}
       </label>
-      <Search aria-hidden className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-ink-faint" />
+      <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" />
       <input
         id={id}
         type="search"
         value={text}
         onChange={(event) => setText(event.target.value)}
         placeholder={placeholder}
-        className="h-9 w-full rounded-control border border-rule bg-sheet pr-3 pl-8 text-sm text-ink placeholder:text-ink-faint"
+        className="h-9 w-full rounded-control border border-rule-soft bg-sheet pr-3 pl-9 shadow-sm transition-shadow focus:border-pen focus:shadow-pop focus:outline-none text-sm text-ink placeholder:text-ink-faint"
       />
     </div>
   )

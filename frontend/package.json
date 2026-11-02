@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "api:gen": "npx --yes -p typescript@5.9.3 -p openapi-typescript@7.13.0 openapi-typescript ../contract/openapi.yaml -o src/types/api.gen.ts"
   },
   "dependencies": {
     "@fontsource-variable/ibm-plex-sans": "^5.3.0",

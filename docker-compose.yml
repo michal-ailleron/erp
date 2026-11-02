@@ -1,4 +1,13 @@
 services:
+  backend:
+    build:
+      # Korzeń repo: obraz potrzebuje contract/openapi.yaml.
+      context: .
+      dockerfile: backend/netting/Dockerfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
@@ -7,9 +16,15 @@ services:
       - "5173:5173"
     environment:
       VITE_USE_MOCKS: "true"
+      # Vite proxy kieruje /api do backendu (kontrahenci); reszta endpointów nadal z MSW.
+      API_PROXY_TARGET: "http://backend:8080"
     volumes:
       # Bind-mount the source for hot reload (keep the repo on the WSL filesystem).
       - ./frontend:/app
       # Keep the container's node_modules, never the host's.
       - /app/node_modules
+      # Kontrakt dla `npm run api:gen` (skrypt czyta ../contract/openapi.yaml).
+      - ./contract:/contract:ro
+    depends_on:
+      - backend
     restart: unless-stopped

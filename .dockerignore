@@ -1,0 +1,5 @@
+# Dotyczy kontekstu z korzenia repo (backend). Frontend buduje się z własnym kontekstem ./frontend.
+.git
+frontend
+**/target
+**/*:Zone.Identifier

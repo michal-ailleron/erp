@@ -76,14 +76,14 @@ export function ReconciliationPage() {
       />
 
       {transactions.error ? (
-        <div className="border-y border-rule bg-sheet">
+        <div className="card">
           <ErrorState message={transactions.error.message} onRetry={() => void transactions.refetch()} />
         </div>
       ) : (
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)]">
           {/* Lewa kolumna: kolejka transakcji */}
           <section aria-labelledby="queue-heading">
-            <div className="flex items-baseline justify-between border-t-2 border-ink pt-3">
+            <div className="flex items-baseline justify-between">
               <h2 id="queue-heading" className="text-xl">
                 Nierozliczone transakcje
               </h2>
@@ -100,7 +100,7 @@ export function ReconciliationPage() {
                 ))}
               </div>
             ) : items.length === 0 ? (
-              <div className="border-y border-rule bg-sheet">
+              <div className="card">
                 <EmptyState
                   title="Wszystkie transakcje są rozliczone"
                   hint="Nowe przelewy pojawią się tutaj po zaimportowaniu wyciągu."
@@ -113,7 +113,7 @@ export function ReconciliationPage() {
                 aria-label="Nierozliczone transakcje"
                 aria-activedescendant={selected ? optionId(selected.id) : undefined}
                 onKeyDown={handleListKeyDown}
-                className="max-h-[28rem] overflow-y-auto border-y border-rule bg-sheet lg:max-h-[calc(100dvh-17rem)]"
+                className="card max-h-[28rem] overflow-y-auto p-1.5 lg:max-h-[calc(100dvh-17rem)]"
               >
                 {items.map((transaction) => (
                   <TransactionOption
@@ -129,7 +129,7 @@ export function ReconciliationPage() {
 
           {/* Prawa kolumna: wybrana transakcja i propozycje */}
           <section aria-labelledby="proposals-heading" className="min-w-0">
-            <div className="border-t-2 border-ink pt-3">
+            <div>
               <h2 id="proposals-heading" className="text-xl">
                 Propozycje dopasowania
               </h2>
@@ -193,8 +193,8 @@ function TransactionOption({
       aria-selected={selected}
       onClick={onSelect}
       className={cn(
-        'cursor-pointer border-b border-l-2 border-b-rule-soft px-3 py-2.5 last:border-b-0',
-        selected ? 'border-l-pen bg-pen-soft' : 'border-l-transparent hover:bg-paper',
+        'cursor-pointer rounded-control px-3 py-2.5 transition-colors',
+        selected ? 'bg-pen-soft ring-1 ring-pen/40' : 'hover:bg-paper',
       )}
     >
       <div className="flex items-baseline justify-between gap-3">
@@ -212,7 +212,7 @@ function TransactionOption({
 /** Pozycja z wyciągu bankowego, do której szukamy faktury. */
 function StatementSlip({ transaction }: { transaction: BankTransaction }) {
   return (
-    <div className="mt-4 border border-rule bg-sheet px-4 py-4">
+    <div className="card mt-4 p-5">
       <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
         <div>
           <dt className="text-xs text-ink-faint">Kontrahent</dt>
@@ -220,7 +220,7 @@ function StatementSlip({ transaction }: { transaction: BankTransaction }) {
         </div>
         <div className="sm:text-right">
           <dt className="text-xs text-ink-faint">Kwota</dt>
-          <dd className="num font-serif text-2xl">{formatMoney(transaction.amount, transaction.currency)}</dd>
+          <dd className="num font-display text-3xl font-semibold">{formatMoney(transaction.amount, transaction.currency)}</dd>
         </div>
         <div className="sm:col-span-2">
           <dt className="text-xs text-ink-faint">Tytuł przelewu</dt>
@@ -260,7 +260,7 @@ function SuggestionList({
     return (
       <div className="mt-4 space-y-2" aria-busy>
         {Array.from({ length: 2 }, (_, i) => (
-          <div key={i} className="h-24 bg-rule-soft motion-safe:animate-pulse" />
+          <div key={i} className="h-24 rounded-card bg-rule-soft motion-safe:animate-pulse" />
         ))}
       </div>
     )
@@ -268,7 +268,7 @@ function SuggestionList({
 
   if (!suggestions || suggestions.length === 0) {
     return (
-      <div className="mt-4 border-y border-rule bg-sheet">
+      <div className="card mt-4">
         <EmptyState
           title="Brak propozycji dla tej transakcji"
           hint="Nie znaleziono pasującej faktury. Sprawdź listę faktur kontrahenta i wróć do tej transakcji."
@@ -283,9 +283,9 @@ function SuggestionList({
   }
 
   return (
-    <ul className="mt-4 border-y border-rule bg-sheet">
+    <ul className="mt-4 space-y-3">
       {suggestions.map((suggestion) => (
-        <li key={suggestion.id} className="border-b border-rule-soft px-4 py-4 last:border-b-0">
+        <li key={suggestion.id} className="card p-5 transition-shadow hover:shadow-pop">
           <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
             <div className="min-w-0 space-y-1">
               <p className="num font-medium">{suggestion.invoiceNumber}</p>

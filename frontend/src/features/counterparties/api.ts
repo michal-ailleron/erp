@@ -1,5 +1,5 @@
 import { apiGet, DEFAULT_PAGE_SIZE } from '@/lib/api-client'
-import type { Counterparty, CounterpartyKind, Page } from '@/types/api'
+import type { CounterpartyKind, CounterpartyPage } from '@/types/api'
 
 export interface CounterpartyQuery {
   page: number
@@ -8,4 +8,4 @@ export interface CounterpartyQuery {
 }
 
 export const fetchCounterparties = (query: CounterpartyQuery) =>
-  apiGet<Page<Counterparty>>('/counterparties', { ...query, pageSize: DEFAULT_PAGE_SIZE })
+  apiGet<CounterpartyPage>('/counterparties', { ...query, pageSize: DEFAULT_PAGE_SIZE })
