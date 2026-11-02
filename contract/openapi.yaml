@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: Uzgodnienia API
   description: >-
-    Kontrakt REST między frontendem (frontend/) a backendem Spring Boot (backend/netting).
-    To jest jedyne źródło prawdy: backend generuje z niego interfejsy, frontend typy (npm run api:gen).
-    Dane wyłącznie syntetyczne.
+    REST contract between the frontend (frontend/) and the Spring Boot backend (backend/netting).
+    This is the single source of truth: the backend generates interfaces from it, the frontend generates types (npm run api:gen).
+    Data is entirely synthetic.
   version: 0.1.0
 servers:
   - url: /api
@@ -16,7 +16,7 @@ paths:
     get:
       tags: [Counterparties]
       operationId: listCounterparties
-      summary: Lista kontrahentów
+      summary: List counterparties
       description: Stronicowana lista z opcjonalnym filtrem po typie i wyszukiwaniem tekstowym (nazwa, NIP, miasto).
       parameters:
         - name: page
@@ -29,7 +29,7 @@ paths:
             default: 1
         - name: pageSize
           in: query
-          description: Liczba pozycji na stronie.
+          description: Number of items per page.
           schema:
             type: integer
             format: int32
@@ -38,7 +38,7 @@ paths:
             default: 10
         - name: q
           in: query
-          description: Szukany tekst, bez rozróżniania wielkości liter.
+          description: Search text, case-insensitive.
           schema:
             type: string
         - name: kind
@@ -48,13 +48,13 @@ paths:
             $ref: '#/components/schemas/CounterpartyKind'
       responses:
         '200':
-          description: Strona kontrahentów
+          description: Counterparties page
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CounterpartyPage'
         '400':
-          description: Nieprawidłowe parametry zapytania
+          description: Invalid query parameters
           content:
             application/json:
               schema:

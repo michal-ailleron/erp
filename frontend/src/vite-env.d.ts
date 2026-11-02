@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** Ustaw na "false", żeby wyłączyć mocki i łączyć się z prawdziwym backendem. */
+  /** Set to "false" to disable the mocks and connect to the real backend. */
   readonly VITE_USE_MOCKS?: string
 }
 

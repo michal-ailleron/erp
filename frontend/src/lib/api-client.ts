@@ -1,6 +1,6 @@
 /**
- * Cienka warstwa nad fetch: jedno miejsce na adres bazowy, błędy i JSON.
- * Komponenty nigdy nie wywołują fetch bezpośrednio, tylko funkcje z features/*\/api.ts.
+ * Thin layer over fetch: one place for the base URL, errors, and JSON.
+ * Components never call fetch directly, only the functions from features/*\/api.ts.
  */
 
 export const DEFAULT_PAGE_SIZE = 10
@@ -18,7 +18,7 @@ export class ApiError extends Error {
 type Query = Record<string, string | number | undefined>
 
 async function request<T>(method: string, path: string, query?: Query, body?: unknown): Promise<T> {
-  // Adres bezwzględny: potrzebny, żeby ten sam kod działał w przeglądarce i w testach (jsdom).
+  // Absolute URL: needed so the same code works in the browser and in tests (jsdom).
   const url = new URL(`/api${path}`, window.location.origin)
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined && value !== '') url.searchParams.set(key, String(value))
@@ -36,7 +36,7 @@ async function request<T>(method: string, path: string, query?: Query, body?: un
       const data = (await response.json()) as { message?: string }
       if (data.message) message = data.message
     } catch {
-      // odpowiedź bez treści JSON: zostaje komunikat domyślny
+      // response without a JSON body: the default message stays
     }
     throw new ApiError(response.status, message)
   }

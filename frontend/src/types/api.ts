@@ -1,8 +1,8 @@
 /**
- * Kontrakt API. Źródłem prawdy jest contract/openapi.yaml: typy z kontraktu pochodzą z
- * `api.gen.ts` (npm run api:gen) i są tu re-eksportowane pod stałymi nazwami. Typy poniżej,
- * dla których kontraktu jeszcze nie ma, są utrzymywane ręcznie i przejdą do OpenAPI razem z endpointami.
- * Kwoty są ciągami dziesiętnymi, nigdy number.
+ * API contract. The source of truth is contract/openapi.yaml: types from the contract come from
+ * `api.gen.ts` (npm run api:gen) and are re-exported here under stable names. The types below,
+ * for which there is no contract yet, are maintained by hand and will move to OpenAPI along with their endpoints.
+ * Amounts are decimal strings, never number.
  */
 import type { components } from './api.gen'
 
@@ -43,7 +43,7 @@ export interface Invoice {
   grossAmount: string
   paidAmount: string
   status: InvoiceStatus
-  /** Po terminie i nieopłacona. Liczy backend, frontend tylko wyświetla. */
+  /** Past due and unpaid. Computed by the backend; the frontend only displays it. */
   overdue: boolean
 }
 
@@ -52,7 +52,7 @@ export type TransactionStatus = 'UNMATCHED' | 'MATCHED'
 export interface BankTransaction {
   id: string
   bookingDate: string
-  /** Dodatnia = wpływ, ujemna = obciążenie. */
+  /** Positive = inflow, negative = outflow. */
   amount: string
   currency: Currency
   counterpartyName: string
@@ -61,7 +61,7 @@ export interface BankTransaction {
   status: TransactionStatus
 }
 
-/** Propozycja dopasowania (docelowo od agenta; teraz z mocków). */
+/** Match suggestion (eventually from an agent; for now from mocks). */
 export interface MatchSuggestion {
   id: string
   transactionId: string
@@ -70,7 +70,7 @@ export interface MatchSuggestion {
   counterpartyName: string
   invoiceOpenAmount: string
   currency: Currency
-  /** Różnica policzona przez backend: kwota transakcji minus kwota do zapłaty. */
+  /** Difference computed by the backend: transaction amount minus amount due. */
   amountDifference: string
   /** 0..1 */
   confidence: number
@@ -80,7 +80,7 @@ export interface MatchSuggestion {
 export interface DashboardSummary {
   openSalesTotal: string
   openCostTotal: string
-  /** Należności minus zobowiązania. Liczy backend. */
+  /** Receivables minus payables. Computed by the backend. */
   netPosition: string
   currency: Currency
   unmatchedTransactions: number
@@ -95,7 +95,7 @@ export interface CreateSettlementRequest {
 
 export interface SettlementResult {
   id: string
-  /** Kwota faktury faktycznie pokryta tą transakcją. Liczy backend. */
+  /** Invoice amount actually covered by this transaction. Computed by the backend. */
   appliedAmount: string
   invoiceNumber: string
 }

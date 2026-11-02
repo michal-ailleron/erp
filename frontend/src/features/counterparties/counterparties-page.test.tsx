@@ -6,7 +6,7 @@ import { renderPage } from '@/test/utils'
 import { CounterpartiesPage } from './counterparties-page'
 
 describe('CounterpartiesPage', () => {
-  it('pokazuje kontrahentów z API', async () => {
+  it('shows counterparties from the API', async () => {
     renderPage(<CounterpartiesPage />)
     const [first] = getDb().counterparties
     if (!first) throw new Error('brak danych testowych')
@@ -14,7 +14,7 @@ describe('CounterpartiesPage', () => {
     expect(await screen.findByText(first.name)).toBeInTheDocument()
   })
 
-  it('filtruje listę po wpisaniu tekstu', async () => {
+  it('filters the list when text is typed', async () => {
     const user = userEvent.setup()
     renderPage(<CounterpartiesPage />)
     await screen.findByText('Nordwind Logistyka Sp. z o.o.')
@@ -25,7 +25,7 @@ describe('CounterpartiesPage', () => {
     expect(screen.getByText('Browar Dolina Sp. k.')).toBeInTheDocument()
   })
 
-  it('pokazuje stan pusty, gdy nic nie pasuje', async () => {
+  it('shows the empty state when nothing matches', async () => {
     const user = userEvent.setup()
     renderPage(<CounterpartiesPage />)
 

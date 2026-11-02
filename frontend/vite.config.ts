@@ -11,7 +11,7 @@ export default defineConfig({
   },
   server: {
     // /api trafia do backendu Spring Boot (w docker-compose: http://backend:8080).
-    // Endpointy, których backend jeszcze nie ma, nadal odpowiada MSW (patrz src/mocks/browser.ts).
+    // Endpoints the backend does not have yet are still answered by MSW (see src/mocks/browser.ts).
     proxy: { '/api': process.env.API_PROXY_TARGET ?? 'http://localhost:8080' },
   },
   test: {

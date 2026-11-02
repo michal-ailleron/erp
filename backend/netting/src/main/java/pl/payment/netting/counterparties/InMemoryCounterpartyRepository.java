@@ -9,9 +9,9 @@ import pl.payment.netting.api.model.Counterparty;
 import pl.payment.netting.api.model.CounterpartyKind;
 
 /**
- * Mock po stronie backendu: te same dane syntetyczne co w frontend/src/mocks/data/seed.ts
- * (ten sam generator liczb pseudolosowych i ta sama kolejność losowań, więc NIP-y i rachunki się zgadzają).
- * Wszystkie nazwy firm, numery NIP i rachunki są zmyślone.
+ * Backend-side mock: the same synthetic data as in frontend/src/mocks/data/seed.ts
+ * (same pseudo-random generator and the same draw order, so the tax IDs and bank accounts match).
+ * All company names, tax IDs, and bank accounts are fictional.
  */
 @Component
 class InMemoryCounterpartyRepository implements CounterpartyRepository {
@@ -46,7 +46,7 @@ class InMemoryCounterpartyRepository implements CounterpartyRepository {
 		Mulberry32 rng = new Mulberry32((int) RNG_SEED);
 		return IntStream.range(0, SEED.size()).mapToObj(i -> {
 			Seed seed = SEED.get(i);
-			// Kolejność losowań jak w seed.ts: NIP, potem liczba rachunków, potem same rachunki.
+			// Draw order as in seed.ts: tax ID, then number of accounts, then the accounts themselves.
 			String taxId = rng.integer(1, 9) + rng.digits(9);
 			int ibanCount = rng.integer(1, 2);
 			List<String> ibans = IntStream.range(0, ibanCount).mapToObj(n -> "PL" + rng.digits(26)).toList();
@@ -60,7 +60,7 @@ class InMemoryCounterpartyRepository implements CounterpartyRepository {
 		}).toList();
 	}
 
-	/** Port generatora mulberry32 z frontendu, żeby dane były identyczne po obu stronach. */
+	/** Port of the mulberry32 generator from the frontend, so the data is identical on both sides. */
 	private static final class Mulberry32 {
 
 		private int state;

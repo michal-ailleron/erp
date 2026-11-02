@@ -2,9 +2,9 @@ import { Search } from 'lucide-react'
 import { useEffect, useId, useState } from 'react'
 
 interface SearchInputProps {
-  /** Aktualna wartość z adresu URL. */
+  /** Current value from the URL. */
   value: string
-  /** Wywoływane dopiero po krótkiej przerwie w pisaniu, żeby nie odpytywać API co literę. */
+  /** Called only after a short pause in typing, so the API is not queried on every letter. */
   onDebouncedChange: (value: string) => void
   label: string
   placeholder?: string
@@ -15,7 +15,7 @@ export function SearchInput({ value, onDebouncedChange, label, placeholder }: Se
   const [text, setText] = useState(value)
   const [previousValue, setPreviousValue] = useState(value)
 
-  // Zmiana z zewnątrz (np. przycisk "wstecz") aktualizuje pole.
+  // An external change (e.g. the "back" button) updates the field.
   if (value !== previousValue) {
     setPreviousValue(value)
     setText(value)

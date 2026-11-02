@@ -1,4 +1,4 @@
-# Dotyczy kontekstu z korzenia repo (backend). Frontend buduje się z własnym kontekstem ./frontend.
+# Applies to the build context from the repo root (backend). The frontend builds with its own context, ./frontend.
 .git
 frontend
 **/target

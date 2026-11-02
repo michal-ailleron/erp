@@ -11,11 +11,11 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 
 import pl.payment.netting.api.model.Error;
 
-/** Błędy w formacie ze schematu `Error` z kontraktu: {"message": "..."}; frontend czyta pole `message`. */
+/** Errors in the `Error` schema format from the contract: {"message": "..."}; the frontend reads the `message` field. */
 @RestControllerAdvice
 class ApiExceptionHandler {
 
-	/** Wygenerowane interfejsy mają @Validated, więc naruszenia @Min/@Max zgłasza walidacja metod. */
+	/** Generated interfaces carry @Validated, so method validation reports @Min/@Max violations. */
 	@ExceptionHandler(ConstraintViolationException.class)
 	ResponseEntity<Error> handleConstraintViolation(ConstraintViolationException exception) {
 		return badRequest("Nieprawidłowe parametry zapytania.");

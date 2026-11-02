@@ -8,7 +8,7 @@ import { ReconciliationPage } from './reconciliation-page'
 const unmatchedCount = () => getDb().transactions.filter((t) => t.status === 'UNMATCHED').length
 
 describe('ReconciliationPage', () => {
-  it('zatwierdza propozycję: transakcja znika z kolejki, a faktura zmienia status', async () => {
+  it('approves a suggestion: the transaction leaves the queue and the invoice changes status', async () => {
     const user = userEvent.setup()
     renderPage(<ReconciliationPage />)
 
@@ -38,7 +38,7 @@ describe('ReconciliationPage', () => {
     await waitFor(() => expect(screen.queryAllByRole('button', { name: 'Odrzuć' }).length).toBeLessThan(before))
   })
 
-  it('wyjaśnia, co zrobić, gdy transakcja nie ma propozycji', async () => {
+  it('explains what to do when a transaction has no suggestion', async () => {
     const user = userEvent.setup()
     renderPage(<ReconciliationPage />)
 
@@ -50,7 +50,7 @@ describe('ReconciliationPage', () => {
     expect(screen.getByRole('link', { name: 'Otwórz listę faktur' })).toBeInTheDocument()
   })
 
-  it('Enter na liście zatwierdza pierwszą propozycję', async () => {
+  it('Enter in the list approves the first suggestion', async () => {
     const user = userEvent.setup()
     renderPage(<ReconciliationPage />)
 

@@ -9,7 +9,7 @@ export function useSuggestions(transactionId: string | undefined) {
   })
 }
 
-/** Zatwierdzenie propozycji = utworzenie rozliczenia. Odświeża wszystko, co się przez to zmienia. */
+/** Approving a suggestion = creating a reconciliation. Refreshes everything this changes. */
 export function useApproveSuggestion() {
   const queryClient = useQueryClient()
   return useMutation({

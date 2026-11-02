@@ -6,12 +6,12 @@ export interface Column<T> {
   key: string
   header: string
   cell: (row: T) => ReactNode
-  /** Kwoty i liczby wyrównujemy do prawej. */
+  /** Amounts and numbers are right-aligned. */
   align?: 'left' | 'right'
 }
 
 interface DataTableProps<T> {
-  /** Opis tabeli dla czytników ekranu. */
+  /** Table description for screen readers. */
   caption: string
   columns: readonly Column<T>[]
   rows: readonly T[] | undefined
@@ -25,7 +25,7 @@ interface DataTableProps<T> {
 
 const SKELETON_ROWS = 6
 
-/** Tabela w stylu księgi: linie zamiast kart, kwoty do prawej. */
+/** Ledger-style table: lines instead of cards, amounts on the right. */
 export function DataTable<T>({
   caption,
   columns,

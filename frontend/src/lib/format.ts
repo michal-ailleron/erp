@@ -1,9 +1,9 @@
 /**
- * Formatowanie wyłącznie do WYŚWIETLANIA.
+ * Formatting for DISPLAY only.
  *
- * Zasada projektu: frontend nigdy nie liczy pieniędzy. Kwoty przychodzą z
- * backendu jako ciągi dziesiętne ("1230.50") i tak samo wracają. Number() poniżej
- * służy tylko do sformatowania napisu, nie do arytmetyki.
+ * Project rule: the frontend never computes money. Amounts arrive from
+ * the backend as decimal strings ("1230.50") and go back the same way. Number() below
+ * is used only to format the string, not for arithmetic.
  */
 import type { Currency } from '@/types/api'
 

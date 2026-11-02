@@ -6,7 +6,7 @@ import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/** Kontrakt deklaruje `servers: /api`, a wygenerowane interfejsy mapują ścieżki bez tego prefiksu. */
+/** The contract declares `servers: /api`, but the generated interfaces map paths without that prefix. */
 @Configuration
 class WebConfig implements WebMvcConfigurer {
 

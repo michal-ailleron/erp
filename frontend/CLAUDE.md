@@ -1,56 +1,56 @@
-# Frontend: Uzgodnienia
+# Frontend: Reconciliation
 
-Interfejs do uzgadniania płatności bankowych z fakturami (mini-ERP, kontrahenci, usługi, faktury, transakcje, ekran rozliczeń).
-Dane pochodzą z backendu Spring Boot (`../backend/netting`) tam, gdzie kontrakt już istnieje (na razie kontrahenci), a z mocków (MSW) tam, gdzie go jeszcze nie ma. Projekt edukacyjny, dane wyłącznie syntetyczne.
+An interface for reconciling bank payments with invoices (mini-ERP: counterparties, services, invoices, transactions, reconciliation screen).
+Data comes from the Spring Boot backend (`../backend/netting`) where the contract already exists (so far: counterparties), and from mocks (MSW) where it does not yet. Educational project, data is entirely synthetic.
 
 ## Stack
 
 React 19, TypeScript (strict), Vite, Tailwind CSS 4, React Router, TanStack Query, MSW, Vitest + Testing Library.
-Biblioteki są w bardzo świeżych wersjach. Przy wątpliwościach sprawdzaj dokumentację i typy w `node_modules`, nie zakładaj
-wzorców ze starszych wersji (dotyczy zwłaszcza React Router, MSW i Vitest).
+Libraries are on very recent versions. When in doubt, check the docs and types in `node_modules`, do not assume
+patterns from older versions (especially React Router, MSW, and Vitest).
 
-## Komendy
+## Commands
 
-- `npm run dev`: serwer deweloperski (mocki włączone, `/api` przez proxy do backendu)
-- `npm run api:gen`: generuje `src/types/api.gen.ts` z `../contract/openapi.yaml` (po każdej zmianie kontraktu)
+- `npm run dev`: dev server (mocks enabled, `/api` proxied to the backend)
+- `npm run api:gen`: generates `src/types/api.gen.ts` from `../contract/openapi.yaml` (after every contract change)
 - `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`
 
-## Struktura
+## Structure
 
-- `src/app`: router i providery
-- `src/components/ui`: komponenty bazowe, `src/components/layout`: układ aplikacji
-- `src/features/<nazwa>`: `api.ts` (fetchery), `hooks.ts` (React Query), `*-page.tsx`, testy obok kodu
-- `src/lib`: klient API, formatowanie, `useListParams`
-- `src/mocks`: mock backendu (`handlers.ts`, dane w `data/seed.ts`, pamięć w `db.ts`)
-- `src/types/api.gen.ts`: typy wygenerowane z kontraktu (nie edytuj ręcznie, commitowany), `src/types/api.ts`: re-eksporty pod stałymi nazwami i typy jeszcze bez kontraktu
+- `src/app`: router and providers
+- `src/components/ui`: base components, `src/components/layout`: app layout
+- `src/features/<name>`: `api.ts` (fetchers), `hooks.ts` (React Query), `*-page.tsx`, tests next to the code
+- `src/lib`: API client, formatting, `useListParams`
+- `src/mocks`: backend mock (`handlers.ts`, data in `data/seed.ts`, memory in `db.ts`)
+- `src/types/api.gen.ts`: types generated from the contract (do not edit by hand, committed), `src/types/api.ts`: re-exports under stable names and types that do not have a contract yet
 
-## Zasady
+## Rules
 
-- **Pieniądze:** frontend nigdy nie liczy kwot. Kwoty to ciągi dziesiętne z backendu ("1230.50"), wyświetlane przez `lib/format.ts`.
-  Sumy, różnice, salda i flagi typu `overdue` liczy backend. Arytmetyka na groszach jest dozwolona tylko w `src/mocks`.
-- Fetch wyłącznie przez `lib/api-client.ts` i funkcje w `features/*/api.ts`. Komponenty używają hooków.
-- Stan list (strona, szukany tekst, filtry) trzymamy w URL (`useListParams`).
-- Źródłem prawdy jest `../contract/openapi.yaml` (wspólny z backendem). Zmiana kontraktu: edytuj YAML, `npm run api:gen`, popraw typecheck, mocki i testy. Nowy endpoint dodajemy do kontraktu, nie do `types/api.ts`.
-- Każda nowa funkcja ma test. Przed zakończeniem pracy `typecheck`, `lint` i `test` muszą przechodzić.
-- Nie dodawaj zależności bez pytania. Bez `any`, `as` tylko na granicy API.
-- Tekst interfejsu po polsku, kod i nazwy po angielsku.
-- Pracuj małymi krokami. Po każdym kroku podsumuj, co zmieniono.
+- **Money:** the frontend never computes amounts. Amounts are decimal strings from the backend ("1230.50"), displayed through `lib/format.ts`.
+  Totals, differences, balances, and flags such as `overdue` are computed by the backend. Arithmetic on cents is allowed only in `src/mocks`.
+- Fetch only through `lib/api-client.ts` and the functions in `features/*/api.ts`. Components use hooks.
+- List state (page, search text, filters) is kept in the URL (`useListParams`).
+- The source of truth is `../contract/openapi.yaml` (shared with the backend). Contract change: edit the YAML, run `npm run api:gen`, fix typecheck, mocks, and tests. A new endpoint goes into the contract, not into `types/api.ts`.
+- Every new feature has a test. Before finishing, `typecheck`, `lint`, and `test` must pass.
+- Do not add dependencies without asking. No `any`; `as` only at the API boundary.
+- UI text is in Polish; code and names are in English.
+- Work in small steps. After each step, summarize what changed.
 
 ## Design
 
-Język "nowoczesny SaaS": miękkie karty (`.card`, promień `--radius-card`, delikatny cień), gradientowy akcent (logo, saldo, przycisk główny),
-szkło (`.glass`) w nawigacji, tło z subtelną poświatą, kwoty w cyfrach tabularnych (`.num`). Jasny i ciemny motyw wg ustawień systemu:
-tokeny kolorów, cieni i fontów są w `src/index.css` (`@theme` i nadpisanie w `prefers-color-scheme: dark`), nie wpisuj kolorów na sztywno.
-Jeden kolor akcji (`pen`), kolory statusu: zielony to rozliczone, czerwony to wymaga uwagi, bursztyn to częściowo.
-Gradienty i cienie tylko przez tokeny i klasy pomocnicze. Widoczny fokus i `prefers-reduced-motion` muszą działać.
+Style: "modern SaaS": soft cards (`.card`, radius `--radius-card`, subtle shadow), gradient accent (logo, balance, primary button),
+glass (`.glass`) in the navigation, background with a subtle glow, amounts in tabular figures (`.num`). Light and dark themes follow the system setting:
+color, shadow, and font tokens live in `src/index.css` (`@theme` and the override in `prefers-color-scheme: dark`); do not hard-code colors.
+One action color (`pen`); status colors: green means reconciled, red means needs attention, amber means partial.
+Gradients and shadows only through tokens and utility classes. Visible focus and `prefers-reduced-motion` must work.
 
-## Weryfikacja UI
+## UI verification
 
-Zmiany wizualne sprawdzaj w uruchomionej aplikacji (np. Playwright), nie tylko kompilacją.
+Check visual changes in the running app (e.g. Playwright), not just by compiling.
 
-## Przejście na prawdziwy backend
+## Switching to the real backend
 
-Proxy `/api` w `vite.config.ts` kieruje do backendu (`API_PROXY_TARGET`, domyślnie `http://localhost:8080`, w docker-compose `http://backend:8080`).
-Przeglądarkowy MSW (`src/mocks/browser.ts`) pomija endpointy z prawdziwą implementacją (`counterpartyHandlers` w `handlers.ts` używają tylko testy).
-Kolejny endpoint: dodaj go do kontraktu, zaimplementuj w backendzie, przenieś jego handler do osobnej listy (jak `counterpartyHandlers`) i wyłącz w `browser.ts`.
-`VITE_USE_MOCKS=false` wyłącza MSW całkowicie (dopiero gdy wszystkie endpointy są w backendzie).
+The `/api` proxy in `vite.config.ts` points to the backend (`API_PROXY_TARGET`, default `http://localhost:8080`, in docker-compose `http://backend:8080`).
+Browser MSW (`src/mocks/browser.ts`) skips endpoints that have a real implementation (`counterpartyHandlers` in `handlers.ts` are used only by tests).
+Next endpoint: add it to the contract, implement it in the backend, move its handler to a separate list (like `counterpartyHandlers`), and disable it in `browser.ts`.
+`VITE_USE_MOCKS=false` disables MSW completely (only once all endpoints are in the backend).

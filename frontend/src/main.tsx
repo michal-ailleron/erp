@@ -7,7 +7,7 @@ import { RouterProvider } from 'react-router/dom'
 import { Providers } from '@/app/providers'
 import { router } from '@/app/router'
 
-/** Mocki są domyślnie włączone. Backend podłączysz przez VITE_USE_MOCKS=false. */
+/** Mocks are enabled by default. Connect the backend with VITE_USE_MOCKS=false. */
 async function enableMocking() {
   if (import.meta.env.VITE_USE_MOCKS === 'false') return
   const { worker } = await import('@/mocks/browser')
