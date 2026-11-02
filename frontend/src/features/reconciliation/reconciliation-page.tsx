@@ -27,7 +27,7 @@ export function ReconciliationPage() {
   const approve = useApproveSuggestion()
   const reject = useRejectSuggestion()
 
-  // Wybrana pozycja zawsze jest widoczna na liście, także przy nawigacji strzałkami.
+  // The selected item is always visible in the list, including when navigating with arrow keys.
   useEffect(() => {
     if (selected) document.getElementById(optionId(selected.id))?.scrollIntoView?.({ block: 'nearest' })
   }, [selected])
@@ -209,7 +209,7 @@ function TransactionOption({
   )
 }
 
-/** Pozycja z wyciągu bankowego, do której szukamy faktury. */
+/** Bank statement item for which we are looking for an invoice. */
 function StatementSlip({ transaction }: { transaction: BankTransaction }) {
   return (
     <div className="card mt-4 p-5">

@@ -53,7 +53,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- Contract-first: interfejsy API i modele powstają z contract/openapi.yaml (wspólny z frontendem). -->
+			<!-- Contract-first: API interfaces and models are generated from contract/openapi.yaml (shared with the frontend). -->
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>

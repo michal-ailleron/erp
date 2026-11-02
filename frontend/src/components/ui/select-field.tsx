@@ -7,7 +7,7 @@ interface SelectFieldProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>,
   onValueChange: (value: string) => void
 }
 
-/** Natywny <select>: dostępny z klawiatury i na telefonie bez dodatkowej pracy. */
+/** Native <select>: keyboard-accessible and works on phones without extra work. */
 export function SelectField({ label, options, onValueChange, className, ...props }: SelectFieldProps) {
   const id = useId()
   return (

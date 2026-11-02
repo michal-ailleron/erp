@@ -4,7 +4,7 @@ import java.util.List;
 
 import pl.payment.netting.api.model.Counterparty;
 
-/** Źródło kontrahentów. Teraz pamięć z danymi syntetycznymi, później baza danych. */
+/** Source of counterparties. Currently in-memory synthetic data; a database later. */
 public interface CounterpartyRepository {
 
 	List<Counterparty> findAll();

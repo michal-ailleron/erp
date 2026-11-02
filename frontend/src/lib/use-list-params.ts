@@ -2,8 +2,8 @@ import { useSearchParams } from 'react-router'
 
 /**
  * Stan listy (strona, szukany tekst, filtry) trzymany w adresie URL.
- * Dzięki temu odświeżenie strony i link do widoku zachowują filtry,
- * a przycisk "wstecz" działa tak, jak użytkownik się spodziewa.
+ * This way, reloading the page and sharing a link keep the filters,
+ * and the "back" button works the way the user expects.
  */
 export function useListParams<F extends string>(filterKeys: readonly F[]) {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -20,7 +20,7 @@ export function useListParams<F extends string>(filterKeys: readonly F[]) {
           if (value === undefined || value === '') next.delete(key)
           else next.set(key, String(value))
         }
-        // Każda zmiana filtra wraca na pierwszą stronę (chyba że zmieniamy samą stronę).
+        // Any filter change returns to the first page (unless only the page itself changes).
         if (!('page' in changes)) next.delete('page')
         return next
       },

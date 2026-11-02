@@ -1,10 +1,10 @@
 @import 'tailwindcss';
 
 /*
- * Język wizualny: nowoczesny SaaS.
- * Miękkie karty z delikatnym cieniem, gradientowy akcent, szkło w nawigacji,
- * jasny i ciemny motyw (wg ustawień systemu). Kolory statusu: zielony to rozliczone,
- * czerwony wymaga uwagi, bursztyn to częściowo. Jeden kolor akcji (`pen`).
+ * Visual language: modern SaaS.
+ * Soft cards with a subtle shadow, gradient accent, glass in the navigation,
+ * light and dark themes (following the system setting). Status colors: green means reconciled,
+ * red needs attention, amber means partial. One action color (`pen`).
  */
 @theme {
   --font-sans: 'IBM Plex Sans Variable', system-ui, sans-serif;
@@ -34,7 +34,7 @@
   --shadow-pop: 0 2px 4px rgb(15 23 42 / 0.06), 0 12px 32px -8px rgb(79 70 229 / 0.25);
 }
 
-/* Ciemny motyw: nadpisujemy tokeny, utility Tailwinda czytają je ze zmiennych. */
+/* Dark theme: we override the tokens; Tailwind utilities read them from variables. */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
@@ -99,12 +99,12 @@
 }
 
 @layer utilities {
-  /* Kwoty zawsze w tabularnych cyfrach, żeby kolumny się równały. */
+  /* Amounts always use tabular figures so columns line up. */
   .num {
     font-variant-numeric: tabular-nums lining-nums;
   }
 
-  /* Karta: miękka powierzchnia z cieniem. */
+  /* Card: soft surface with a shadow. */
   .card {
     background: var(--color-sheet);
     border: 1px solid var(--color-rule-soft);
@@ -112,7 +112,7 @@
     box-shadow: var(--shadow-card);
   }
 
-  /* Tekst z gradientem akcentu (kwoty kluczowe, logo). */
+  /* Text with the accent gradient (key amounts, logo). */
   .text-gradient {
     background: linear-gradient(120deg, var(--color-pen), var(--color-tick));
     -webkit-background-clip: text;
@@ -120,14 +120,14 @@
     color: transparent;
   }
 
-  /* Szkło: półprzezroczyste tło z rozmyciem. */
+  /* Glass: semi-transparent background with blur. */
   .glass {
     background: color-mix(in oklab, var(--color-sheet) 72%, transparent);
     backdrop-filter: blur(14px) saturate(1.4);
   }
 }
 
-/* Ptaszek audytora rysowany po zatwierdzeniu rozliczenia (reakcja na akcję użytkownika). */
+/* Auditor's checkmark drawn after a reconciliation is approved (reaction to a user action). */
 @keyframes draw-tick {
   from {
     stroke-dashoffset: 24;

@@ -1,7 +1,7 @@
 /**
  * Mock backendu REST. Odpowiada kontraktowi z src/types/api.ts.
- * Gdy powstanie prawdziwe API (Spring Boot), te endpointy trzeba zaimplementować
- * po stronie ERP: ten plik jest wykonywalną specyfikacją.
+ * Once the real API (Spring Boot) exists, these endpoints must be implemented
+ * on the ERP side: this file is the executable specification.
  */
 import { delay, http, HttpResponse } from 'msw'
 import type {
@@ -36,8 +36,8 @@ function error(status: number, message: string) {
 }
 
 /**
- * Kontrahenci mają już prawdziwy endpoint w backendzie (contract/openapi.yaml), więc przeglądarka
- * go nie mockuje (patrz browser.ts). Testy (server.ts) nadal go używają, żeby działały bez backendu.
+ * Counterparties already have a real endpoint in the backend (contract/openapi.yaml), so the browser
+ * does not mock it (see browser.ts). Tests (server.ts) still use it so they run without the backend.
  */
 export const counterpartyHandlers = [
   http.get('/api/counterparties', async ({ request }) => {
@@ -52,7 +52,7 @@ export const counterpartyHandlers = [
   }),
 ]
 
-/** Endpointy, których backend jeszcze nie implementuje. */
+/** Endpoints the backend does not implement yet. */
 export const handlers = [
   http.get('/api/services', async ({ request }) => {
     await latency()

@@ -8,7 +8,7 @@ import { ServicesPage } from '@/features/services/services-page'
 import { TransactionsPage } from '@/features/transactions/transactions-page'
 import { NotFoundPage } from './not-found-page'
 
-/** Trasy osobno od routera, żeby testy mogły użyć ich z MemoryRouter. */
+/** Routes are defined separately from the router so tests can use them with MemoryRouter. */
 export const routes: RouteObject[] = [
   {
     path: '/',

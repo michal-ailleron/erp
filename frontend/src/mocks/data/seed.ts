@@ -1,9 +1,9 @@
 /**
- * Deterministyczne dane syntetyczne dla mocków (ten sam seed = te same dane).
- * Wszystkie nazwy firm, numery NIP i rachunki są zmyślone.
+ * Deterministic synthetic data for the mocks (same seed = same data).
+ * All company names, tax IDs, and bank accounts are fictional.
  *
- * Uwaga: arytmetyka na groszach jest tu dozwolona, bo mock ODGRYWA ROLĘ
- * BACKENDU. W kodzie aplikacji (src/features, src/components) kwot się nie liczy.
+ * Note: arithmetic on cents is allowed here because the mock PLAYS THE ROLE
+ * OF THE BACKEND. In application code (src/features, src/components) amounts are not computed.
  */
 import type {
   BankTransaction,
@@ -26,7 +26,7 @@ export interface Db {
   suggestions: MatchSuggestion[]
 }
 
-/* ---------- pomocnicze: grosze i daty (tylko mocki) ---------- */
+/* ---------- helpers: cents and dates (mocks only) ---------- */
 
 export const toCents = (amount: string): number => Math.round(Number(amount) * 100)
 export const fromCents = (cents: number): string => (cents / 100).toFixed(2)
@@ -85,7 +85,7 @@ function must<T>(value: T | undefined, message: string): T {
   return value
 }
 
-/* ---------- dane słownikowe ---------- */
+/* ---------- reference data ---------- */
 
 const COUNTERPARTY_SEED = [
   ['Nordwind Logistyka Sp. z o.o.', 'Gdańsk', 'CUSTOMER'],
@@ -114,7 +114,7 @@ const SERVICE_SEED: readonly (readonly [string, string, number, Currency])[] = [
   ['Implementation support', 'h', 4500, 'EUR'],
 ]
 
-/* ---------- główny generator ---------- */
+/* ---------- main generator ---------- */
 
 export function createSeed(): Db {
   const rng = createRng(20261029)
@@ -232,7 +232,7 @@ export function createSeed(): Db {
   const round2 = (x: number) => Math.round(x * 100) / 100
   const high = () => round2(0.95 + rng() * 0.04)
 
-  /** Inna faktura tego samego kontrahenta i typu: słabsza propozycja obok właściwej. */
+  /** Another invoice of the same counterparty and type: a weaker suggestion next to the right one. */
   function addDecoy(tx: BankTransaction, invoice: Invoice, pool: Invoice[]) {
     const other = pool.find(
       (i) => i.id !== invoice.id && i.counterpartyId === invoice.counterpartyId && i.type === invoice.type,
@@ -250,7 +250,7 @@ export function createSeed(): Db {
     return slice
   }
 
-  // Historia: już rozliczone (6 w całości, 2 częściowo)
+  // History: already reconciled (6 in full, 2 partially)
   const history = take(8)
   history.forEach((inv, i) => {
     const full = i < 6
@@ -262,7 +262,7 @@ export function createSeed(): Db {
 
   const open = invoices.filter((i) => i.status === 'OPEN')
 
-  // 1. Czyste przypadki: numer w tytule, kwota zgodna
+  // 1. Clean cases: invoice number in the title, amount matches
   take(10).forEach((inv, i) => {
     const tx = makeTransaction({
       invoice: inv,
@@ -288,7 +288,7 @@ export function createSeed(): Db {
     addDecoy(tx, inv, open)
   })
 
-  // 3. Numer z literówką lub bez ukośników
+  // 3. Number with a typo or without slashes
   take(4).forEach((inv) => {
     const tx = makeTransaction({
       invoice: inv,
@@ -299,7 +299,7 @@ export function createSeed(): Db {
     suggest(tx, inv, round2(0.8 + rng() * 0.1), 'Numer faktury zapisany bez ukośników, kontrahent i kwota się zgadzają.')
   })
 
-  // 4. Wpłaty częściowe
+  // 4. Partial payments
   take(3).forEach((inv) => {
     const share = int(rng, 4, 7) / 10
     const tx = makeTransaction({
@@ -316,7 +316,7 @@ export function createSeed(): Db {
     )
   })
 
-  // 5. Bez żadnej propozycji (np. zwrot, przelew własny)
+  // 5. No suggestion at all (e.g. refund, internal transfer)
   const anchors = take(2)
   const noMatchTitles = ['Zwrot nadpłaty', 'Przelew własny, rozliczenie kasy']
   anchors.forEach((inv, i) => {

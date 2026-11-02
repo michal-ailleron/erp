@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-/** Ptaszek audytora. Z `animate` rysuje się po zatwierdzeniu rozliczenia. */
+/** Auditor's checkmark. With `animate` it is drawn after a reconciliation is approved. */
 export function TickIcon({ className, animate = false }: { className?: string; animate?: boolean }) {
   return (
     <svg

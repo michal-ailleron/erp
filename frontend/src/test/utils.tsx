@@ -4,7 +4,7 @@ import type { ReactElement } from 'react'
 import { MemoryRouter } from 'react-router'
 import { createQueryClient } from '@/app/providers'
 
-/** Renderuje stronę z tymi samymi dostawcami co w aplikacji (React Query + router). */
+/** Renders a page with the same providers as the app (React Query + router). */
 export function renderPage(ui: ReactElement, { route = '/' }: { route?: string } = {}) {
   return render(
     <QueryClientProvider client={createQueryClient({ retry: false })}>

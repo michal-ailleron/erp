@@ -12,7 +12,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Lista kontrahentów
+         * List counterparties
          * @description Stronicowana lista z opcjonalnym filtrem po typie i wyszukiwaniem tekstowym (nazwa, NIP, miasto).
          */
         get: operations["listCounterparties"];
@@ -64,9 +64,9 @@ export interface operations {
             query?: {
                 /** @description Numer strony, od 1. */
                 page?: number;
-                /** @description Liczba pozycji na stronie. */
+                /** @description Number of items per page. */
                 pageSize?: number;
-                /** @description Szukany tekst, bez rozróżniania wielkości liter. */
+                /** @description Search text, case-insensitive. */
                 q?: string;
                 /** @description Filtr po typie kontrahenta. */
                 kind?: components["schemas"]["CounterpartyKind"];
@@ -77,7 +77,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Strona kontrahentów */
+            /** @description Counterparties page */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -86,7 +86,7 @@ export interface operations {
                     "application/json": components["schemas"]["CounterpartyPage"];
                 };
             };
-            /** @description Nieprawidłowe parametry zapytania */
+            /** @description Invalid query parameters */
             400: {
                 headers: {
                     [name: string]: unknown;

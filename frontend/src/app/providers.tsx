@@ -14,7 +14,7 @@ export function createQueryClient(options?: { retry?: boolean }) {
 }
 
 export function Providers({ children }: { children: ReactNode }) {
-  // useState: jeden klient na cały czas życia aplikacji, nie nowy przy każdym renderze.
+  // useState: one client for the app's whole lifetime, not a new one on every render.
   const [queryClient] = useState(() => createQueryClient())
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }

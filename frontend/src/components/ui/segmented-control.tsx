@@ -7,7 +7,7 @@ interface SegmentedControlProps<V extends string> {
   onValueChange: (value: V) => void
 }
 
-/** Grupa przycisków radio: strzałki i fokus działają natywnie. */
+/** Radio button group: arrow keys and focus work natively. */
 export function SegmentedControl<V extends string>({ legend, value, options, onValueChange }: SegmentedControlProps<V>) {
   const name = useId()
   return (

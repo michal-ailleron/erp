@@ -17,25 +17,25 @@ const baseProps = {
 }
 
 describe('DataTable', () => {
-  it('wyświetla wiersze', () => {
+  it('renders rows', () => {
     render(<DataTable {...baseProps} isLoading={false} rows={[{ id: '1', name: 'Alfa' }]} />)
     expect(screen.getByRole('table', { name: 'Testowa tabela' })).toBeInTheDocument()
     expect(screen.getByText('Alfa')).toBeInTheDocument()
   })
 
-  it('pokazuje stan pusty z podpowiedzią', () => {
+  it('shows the empty state with a hint', () => {
     render(<DataTable {...baseProps} isLoading={false} rows={[]} emptyHint="Zmień filtry." />)
     expect(screen.getByText('Pusto')).toBeInTheDocument()
     expect(screen.getByText('Zmień filtry.')).toBeInTheDocument()
   })
 
-  it('pokazuje błąd z możliwością ponowienia', () => {
+  it('shows an error with a retry option', () => {
     render(<DataTable {...baseProps} isLoading={false} rows={undefined} errorMessage="Serwer nie odpowiada." onRetry={() => {}} />)
     expect(screen.getByRole('alert')).toHaveTextContent('Serwer nie odpowiada.')
     expect(screen.getByRole('button', { name: 'Spróbuj ponownie' })).toBeInTheDocument()
   })
 
-  it('oznacza ładowanie jako zajęte', () => {
+  it('marks loading as busy', () => {
     render(<DataTable {...baseProps} isLoading rows={undefined} />)
     expect(document.querySelector('tbody')).toHaveAttribute('aria-busy', 'true')
   })

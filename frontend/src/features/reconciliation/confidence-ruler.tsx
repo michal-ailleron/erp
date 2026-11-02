@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 
 const SEGMENTS = 10
 
-/** Miarka pewności w stylu linijki: dziesięć kresek, kolor zależy od progu. */
+/** Confidence ruler, styled like a rule: ten ticks, color depends on the threshold. */
 export function ConfidenceRuler({ value }: { value: number }) {
   const filled = Math.round(value * SEGMENTS)
   const tone = value >= 0.9 ? 'bg-tick' : value >= 0.6 ? 'bg-amber' : 'bg-flag'

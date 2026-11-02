@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { formatIban, formatMoney, formatPercent } from './format'
 
-// Intl używa twardych spacji, w testach porównujemy zwykłe.
+// Intl uses non-breaking spaces; the tests compare regular spaces.
 const plain = (value: string) => value.replace(/\s/g, ' ')
 
 describe('formatMoney', () => {
-  it('formatuje kwotę po polsku z kodem waluty', () => {
+  it('formats the amount in Polish style with the currency code', () => {
     expect(plain(formatMoney('12345.6', 'PLN'))).toBe('12 345,60 PLN')
   })
 
-  it('zachowuje znak obciążenia', () => {
+  it('keeps the sign of a debit', () => {
     expect(plain(formatMoney('-250.00', 'EUR'))).toBe('-250,00 EUR')
   })
 })
@@ -21,7 +21,7 @@ describe('formatIban', () => {
 })
 
 describe('formatPercent', () => {
-  it('zaokrągla pewność do pełnych procentów', () => {
+  it('rounds confidence to whole percent', () => {
     expect(formatPercent(0.874)).toBe('87%')
   })
 })

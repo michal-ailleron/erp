@@ -1,30 +1,30 @@
 ---
 name: new-list-screen
-description: Dodaje nowy ekran z listą (tabela z wyszukiwaniem, filtrami i stronicowaniem) w tym projekcie. Użyj, gdy trzeba dodać nową encję lub listę.
+description: Adds a new list screen (table with search, filters, and pagination) to this project. Use when a new entity or list needs to be added.
 ---
 
-# Nowy ekran listowy
+# New list screen
 
-Wzorzec referencyjny: `src/features/counterparties` (prosty) i `src/features/invoices` (z filtrami).
+Reference patterns: `src/features/counterparties` (simple) and `src/features/invoices` (with filters).
 
-## Kroki
+## Steps
 
-1. **Typ w kontrakcie:** dodaj interfejs do `src/types/api.ts`. Kwoty jako `string`. Wartości wyliczane (sumy, flagi) dostarcza backend.
-2. **Mock:** dodaj dane do `src/mocks/data/seed.ts` i endpoint `GET /api/<zasób>` do `src/mocks/handlers.ts`
-   (użyj `paginate` i `matchesText`).
-3. **Fetcher:** `src/features/<nazwa>/api.ts` z funkcją opartą na `apiGet` i typem zapytania.
-4. **Hook:** `src/features/<nazwa>/hooks.ts` z `useQuery` i `placeholderData: keepPreviousData`.
-5. **Strona:** `src/features/<nazwa>/<nazwa>-page.tsx`
-   - stan listy przez `useListParams`, wartości filtrów przepuszczone przez `parseOneOf`,
-   - kolumny jako `Column<T>[]` w `DataTable`, kwoty z `align: 'right'` i `formatMoney`,
-   - `PageHeader`, `SearchInput`, opcjonalnie `SegmentedControl` / `SelectField`, `Pagination`,
-   - komunikaty stanu pustego i błędu po polsku, mówiące, co zrobić dalej.
-6. **Trasa i menu:** wpis w `src/app/router.tsx` i w `NAV_ITEMS` w `src/components/layout/app-shell.tsx`.
-7. **Test:** `<nazwa>-page.test.tsx` obok strony (lista się wczytuje, wyszukiwanie filtruje, stan pusty). Wzór: `counterparties-page.test.tsx`.
-8. **Weryfikacja:** `npm run typecheck && npm run lint && npm test`.
+1. **Contract type:** add the interface to `src/types/api.ts`. Amounts as `string`. Computed values (totals, flags) are provided by the backend.
+2. **Mock:** add data to `src/mocks/data/seed.ts` and a `GET /api/<resource>` endpoint to `src/mocks/handlers.ts`
+   (use `paginate` and `matchesText`).
+3. **Fetcher:** `src/features/<name>/api.ts` with a function based on `apiGet` and a query type.
+4. **Hook:** `src/features/<name>/hooks.ts` with `useQuery` and `placeholderData: keepPreviousData`.
+5. **Page:** `src/features/<name>/<name>-page.tsx`
+   - list state via `useListParams`, filter values passed through `parseOneOf`,
+   - columns as `Column<T>[]` in `DataTable`, amounts with `align: 'right'` and `formatMoney`,
+   - `PageHeader`, `SearchInput`, optionally `SegmentedControl` / `SelectField`, `Pagination`,
+   - empty and error state messages in Polish, telling the user what to do next.
+6. **Route and menu:** an entry in `src/app/router.tsx` and in `NAV_ITEMS` in `src/components/layout/app-shell.tsx`.
+7. **Test:** `<name>-page.test.tsx` next to the page (list loads, search filters, empty state). Pattern: `counterparties-page.test.tsx`.
+8. **Verification:** `npm run typecheck && npm run lint && npm test`.
 
-## Czego nie robić
+## What not to do
 
-- Nie liczyć kwot we froncie.
-- Nie wywoływać `fetch` w komponentach.
-- Nie dodawać bibliotek do tabel ani formularzy bez uzgodnienia.
+- Don't compute amounts in the frontend.
+- Don't call `fetch` in components.
+- Don't add libraries for tables or forms without agreement.
