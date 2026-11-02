@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/netting/Dockerfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      target: prod
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
+    restart: unless-stopped
