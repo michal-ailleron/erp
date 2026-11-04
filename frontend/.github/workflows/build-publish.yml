@@ -1,0 +1,273 @@
+name: Build and publish application images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      component:
+        description: Which application to build from this branch
+        required: true
+        type: choice
+        options:
+          - both
+          - frontend
+          - backend
+        default: both
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+
+# Serialize release tagging so two successful main runs cannot choose the same next version.
+concurrency:
+  group: erp-image-release
+  cancel-in-progress: false
+
+jobs:
+  changes:
+    name: Detect changed applications
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Filter changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - 'contract/**'
+            backend:
+              - 'backend/netting/**'
+              - 'contract/**'
+
+  build-frontend:
+    name: Build frontend
+    needs: changes
+    if: >-
+      (github.event_name == 'workflow_dispatch' && (inputs.component == 'frontend' || inputs.component == 'both')) ||
+      (github.event_name == 'push' && needs.changes.outputs.frontend == 'true')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate API types
+        run: npm run api:gen
+
+      - name: Lint, test, and build
+        run: |
+          npm run lint
+          npm test
+          npm run build
+
+      - name: Upload frontend build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  build-backend:
+    name: Build backend
+    needs: changes
+    if: >-
+      (github.event_name == 'workflow_dispatch' && (inputs.component == 'backend' || inputs.component == 'both')) ||
+      (github.event_name == 'push' && needs.changes.outputs.backend == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build and test backend
+        working-directory: backend/netting
+        run: chmod +x mvnw && ./mvnw -B verify
+
+      - name: Stage executable JAR
+        run: |
+          mkdir -p "$RUNNER_TEMP/backend-artifact"
+          cp backend/netting/target/netting-*.jar "$RUNNER_TEMP/backend-artifact/app.jar"
+
+      - name: Upload backend build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: ${{ runner.temp }}/backend-artifact/app.jar
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-frontend:
+    name: Publish frontend image
+    needs: build-frontend
+    if: needs.build-frontend.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download frontend build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: image-context/dist
+
+      - name: Prepare image context
+        run: |
+          cp frontend/Caddyfile image-context/Caddyfile
+          cat > image-context/Dockerfile <<'EOF'
+          FROM caddy:2.8.4-alpine
+          COPY Caddyfile /etc/caddy/Caddyfile
+          COPY dist /srv
+          EXPOSE 4173
+          EOF
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculate frontend image tags
+        id: version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF" == "refs/heads/main" ]]; then
+            latest="$(git tag --list 'frontend-v[0-9]*' --sort=-version:refname | head -n 1)"
+            current="${latest#frontend-v}"
+            if [[ -z "$latest" ]]; then current="0.0.0"; fi
+            IFS=. read -r major minor patch <<< "$current"
+            version="frontend-v${major}.${minor}.$((patch + 1))"
+            echo "version=${version#frontend-v}" >> "$GITHUB_OUTPUT"
+            echo "release_tag=$version" >> "$GITHUB_OUTPUT"
+            echo "image_tags=${IMAGE_PREFIX}-frontend:${version#frontend-v},${IMAGE_PREFIX}-frontend:prod,${IMAGE_PREFIX}-frontend:sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          else
+            echo "image_tags=${IMAGE_PREFIX}-frontend:dev,${IMAGE_PREFIX}-frontend:sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: image-context
+          push: true
+          tags: ${{ steps.version.outputs.image_tags }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: Create frontend Git version tag
+        if: steps.version.outputs.release_tag != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.release_tag }}" "$GITHUB_SHA" -m "Release frontend ${{ steps.version.outputs.version }}"
+          git push origin "${{ steps.version.outputs.release_tag }}"
+
+  publish-backend:
+    name: Publish backend image
+    needs: build-backend
+    if: needs.build-backend.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download backend build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: image-context
+
+      - name: Prepare image context
+        run: |
+          cat > image-context/Dockerfile <<'EOF'
+          FROM eclipse-temurin:25-jre-alpine
+          WORKDIR /app
+          COPY app.jar /app/app.jar
+          EXPOSE 8080
+          ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+          EOF
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculate backend image tags
+        id: version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF" == "refs/heads/main" ]]; then
+            latest="$(git tag --list 'backend-v[0-9]*' --sort=-version:refname | head -n 1)"
+            current="${latest#backend-v}"
+            if [[ -z "$latest" ]]; then current="0.0.0"; fi
+            IFS=. read -r major minor patch <<< "$current"
+            version="backend-v${major}.${minor}.$((patch + 1))"
+            echo "version=${version#backend-v}" >> "$GITHUB_OUTPUT"
+            echo "release_tag=$version" >> "$GITHUB_OUTPUT"
+            echo "image_tags=${IMAGE_PREFIX}-backend:${version#backend-v},${IMAGE_PREFIX}-backend:prod,${IMAGE_PREFIX}-backend:sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          else
+            echo "image_tags=${IMAGE_PREFIX}-backend:dev,${IMAGE_PREFIX}-backend:sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: image-context
+          push: true
+          tags: ${{ steps.version.outputs.image_tags }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Create backend Git version tag
+        if: steps.version.outputs.release_tag != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.release_tag }}" "$GITHUB_SHA" -m "Release backend ${{ steps.version.outputs.version }}"
+          git push origin "${{ steps.version.outputs.release_tag }}"
