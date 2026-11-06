@@ -1,4 +1,4 @@
-import type { CounterpartyKind, Invoice, InvoiceType, TransactionStatus } from '@/types/api'
+import type { Invoice, TransactionStatus } from '@/types/api'
 import { Badge } from './ui/badge'
 
 export function InvoiceStatusBadge({ invoice }: { invoice: Invoice }) {
@@ -14,15 +14,4 @@ export function InvoiceStatusBadge({ invoice }: { invoice: Invoice }) {
 
 export function TransactionStatusBadge({ status }: { status: TransactionStatus }) {
   return status === 'MATCHED' ? <Badge tone="ok">Rozliczona</Badge> : <Badge tone="warn">Nierozliczona</Badge>
-}
-
-export const COUNTERPARTY_KIND_LABEL: Record<CounterpartyKind, string> = {
-  CUSTOMER: 'Odbiorca',
-  SUPPLIER: 'Dostawca',
-  BOTH: 'Odbiorca i dostawca',
-}
-
-export const INVOICE_TYPE_LABEL: Record<InvoiceType, string> = {
-  SALES: 'Sprzedaż',
-  COST: 'Koszt',
 }
