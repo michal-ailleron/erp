@@ -1,16 +1,12 @@
 services:
   backend:
-    build:
-      context: .
-      dockerfile: backend/netting/Dockerfile
+    image: ghcr.io/michal-ailleron/erp-backend:prod
     ports:
       - "8080:8080"
     restart: unless-stopped
 
   frontend:
-    build:
-      context: ./frontend
-      target: prod
+    image: ghcr.io/michal-ailleron/erp-frontend:prod
     ports:
       - "4173:4173"
     depends_on:
