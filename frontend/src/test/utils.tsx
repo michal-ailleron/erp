@@ -2,7 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { render } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { MemoryRouter } from 'react-router'
-import { createQueryClient } from '@/app/providers'
+import { createQueryClient } from '@/app/query-client'
 
 /** Renders a page with the same providers as the app (React Query + router). */
 export function renderPage(ui: ReactElement, { route = '/' }: { route?: string } = {}) {

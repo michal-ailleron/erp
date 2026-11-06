@@ -1,4 +1,5 @@
-import { INVOICE_TYPE_LABEL, InvoiceStatusBadge } from '@/components/status-badges'
+import { INVOICE_TYPE_LABEL } from '@/components/labels'
+import { InvoiceStatusBadge } from '@/components/status-badges'
 import { DataTable, type Column } from '@/components/ui/data-table'
 import { PageHeader } from '@/components/ui/page-header'
 import { Pagination } from '@/components/ui/pagination'

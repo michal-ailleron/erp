@@ -1,4 +1,4 @@
-import { COUNTERPARTY_KIND_LABEL } from '@/components/status-badges'
+import { COUNTERPARTY_KIND_LABEL } from '@/components/labels'
 import { Badge } from '@/components/ui/badge'
 import { DataTable, type Column } from '@/components/ui/data-table'
 import { PageHeader } from '@/components/ui/page-header'
